@@ -26,7 +26,7 @@ class SumValidatorTest extends ConstraintValidatorTestCase
         return new SumValidator();
     }
 
-    public function testNullIsValid(): void
+    public function testNullIsValid()
     {
         $this->validator->validate(null, new Sum(exactly: 6));
         $this->assertNoViolation();
@@ -99,7 +99,7 @@ class SumValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    private function getSum(iterable $values): float
+    private function getSum(iterable $values)
     {
         $sum = 0.0;
 
@@ -110,7 +110,7 @@ class SumValidatorTest extends ConstraintValidatorTestCase
         return $sum;
     }
 
-    private static function get123Generator(): \Generator
+    private static function get123Generator()
     {
         yield 1;
         yield 2;
