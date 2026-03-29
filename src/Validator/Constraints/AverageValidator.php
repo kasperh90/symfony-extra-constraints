@@ -18,12 +18,12 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 /**
  * @author Kasper Hansen <kasper.h90@gmail.com>
  */
-class SumValidator extends AbstractNumericAggregateValidator
+class AverageValidator extends AbstractNumericAggregateValidator
 {
     public function validate(mixed $value, Constraint $constraint): void
     {
-        if (!$constraint instanceof Sum) {
-            throw new UnexpectedTypeException($constraint, Sum::class);
+        if (!$constraint instanceof Average) {
+            throw new UnexpectedTypeException($constraint, Average::class);
         }
 
         if (null === $value) {
@@ -34,7 +34,19 @@ class SumValidator extends AbstractNumericAggregateValidator
             throw new UnexpectedValueException($value, 'iterable');
         }
 
-        if (!$this->computeAggregate($value, $constraint->notNumericMessage, Sum::NOT_NUMERIC_ERROR)) {
+        if (!$this->computeAggregate($value, $constraint->notNumericMessage, Average::NOT_NUMERIC_ERROR)) {
+            return;
+        }
+
+        try {
+            $average = $this->sum / $this->count;
+        } catch (\DivisionByZeroError) {
+            $this->context->buildViolation($constraint->divisionByZeroMessage)
+                ->setParameter('{{ value }}', '[]')
+                ->setInvalidValue($value)
+                ->setCode(Average::DIVISION_BY_ZERO_ERROR)
+                ->addViolation();
+
             return;
         }
 
@@ -46,35 +58,35 @@ class SumValidator extends AbstractNumericAggregateValidator
             && abs($min - $max) <= self::FLOAT_TOLERANCE;
 
         if ($exactlyOptionEnabled) {
-            if (abs($this->sum - $min) > self::FLOAT_TOLERANCE) {
+            if (abs($average - $min) > self::FLOAT_TOLERANCE) {
                 $this->context->buildViolation($constraint->exactMessage)
-                    ->setParameter('{{ sum }}', $this->sum)
+                    ->setParameter('{{ average }}', $average)
                     ->setParameter('{{ limit }}', $min)
                     ->setInvalidValue($value)
-                    ->setCode(Sum::NOT_EQUAL_SUM_ERROR)
+                    ->setCode(Average::NOT_EQUAL_AVERAGE_ERROR)
                     ->addViolation();
             }
 
             return;
         }
 
-        if (null !== $max && $this->sum > $max) {
+        if (null !== $max && $average - $max > self::FLOAT_TOLERANCE) {
             $this->context->buildViolation($constraint->maxMessage)
-                ->setParameter('{{ sum }}', $this->sum)
+                ->setParameter('{{ average }}', $average)
                 ->setParameter('{{ limit }}', $max)
                 ->setInvalidValue($value)
-                ->setCode(Sum::TOO_HIGH_ERROR)
+                ->setCode(Average::TOO_HIGH_ERROR)
                 ->addViolation();
 
             return;
         }
 
-        if (null !== $min && $this->sum < $min) {
+        if (null !== $min && $min - $average > self::FLOAT_TOLERANCE) {
             $this->context->buildViolation($constraint->minMessage)
-                ->setParameter('{{ sum }}', $this->sum)
+                ->setParameter('{{ average }}', $average)
                 ->setParameter('{{ limit }}', $min)
                 ->setInvalidValue($value)
-                ->setCode(Sum::TOO_LOW_ERROR)
+                ->setCode(Average::TOO_LOW_ERROR)
                 ->addViolation();
         }
     }

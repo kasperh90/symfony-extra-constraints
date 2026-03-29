@@ -62,9 +62,7 @@ class SumValidatorTest extends ConstraintValidatorTestCase
     public function testNonNumericValue(iterable|callable $values, string $invalid)
     {
         $values = \is_callable($values) ? $values() : $values;
-
         $constraint = new Sum(min: 0);
-
         $this->validator->validate($values, $constraint);
 
         $this->buildViolation($constraint->notNumericMessage)
@@ -77,7 +75,6 @@ class SumValidatorTest extends ConstraintValidatorTestCase
     public function testMinEqualsMaxActsAsExact()
     {
         $values = [1, 2, 3];
-
         $constraint = new Sum(min: 6, max: 6);
         $this->validator->validate($values, $constraint);
 
@@ -87,7 +84,6 @@ class SumValidatorTest extends ConstraintValidatorTestCase
     public function testMinEqualsMaxViolation()
     {
         $values = [1, 2, 3];
-
         $constraint = new Sum(min: 7, max: 7);
         $this->validator->validate($values, $constraint);
 
