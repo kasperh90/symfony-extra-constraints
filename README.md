@@ -22,29 +22,7 @@ use Kasperh90\SymfonyExtraConstraints\Validator\Constraints as ExtraAssert;
 
 ### Sum
 
-Validates the sum of an iterable of numeric values.
-
-#### Options
-
-- `exactly`: The exact expected sum of the collection. When set, the constraint
-  ensures that the sum of all values equals this value.
-- `min`: The minimum allowed sum of the collection.
-- `max`: The maximum allowed sum of the collection.
-- `exactMessage`: The message shown if the sum of the collection does not equal
-  the expected value.
-- `minMessage`: The message shown if the sum of the collection is lower than the
-  configured minimum.
-- `maxMessage`: The message shown if the sum of the collection exceeds the
-  configured maximum.
-- `notNumericMessage`: The message shown when a value in the collection is not
-  numeric.
-
-#### Default options
-
-- `groups`: The validation groups this constraint belongs to
-- `payload`: Domain-specific data attached to the constraint
-
-#### Example
+Validates that the sum of a collection of numeric values meets a given constraint.
 
 ```php
 use Kasperh90\SymfonyExtraConstraints\Validator\Constraints as ExtraAssert;
@@ -61,6 +39,36 @@ class Allocation
     public array $expenses;
 }
 ```
+
+#### Options
+
+- `exactly`: Require the sum to equal a specific value
+- `min`: Require the sum to be greater than or equal to a value
+- `max`: Require the sum to be less than or equal to a value
+
+### Average
+
+Validates that the average of a collection of numeric values meets a given constraint.
+
+```php
+class Ratings
+{
+    #[ExtraAssert\Average(min: 3.5)]
+    public array $userRatings;
+
+    #[ExtraAssert\Average(max: 5)]
+    public array $scores;
+
+    #[ExtraAssert\Average(exactly: 4)]
+    public array $normalizedRatings;
+}
+```
+
+#### Options
+
+- `exactly`: Require the average to equal a specific value
+- `min`: Require the average to be greater than or equal to a value
+- `max`: Require the average to be less than or equal to a value
 
 ## License
 
