@@ -25,8 +25,6 @@ use Kasperh90\SymfonyExtraConstraints\Validator\Constraints as ExtraAssert;
 Validates that the sum of a collection of numeric values meets a given constraint.
 
 ```php
-use Kasperh90\SymfonyExtraConstraints\Validator\Constraints as ExtraAssert;
-
 class Allocation
 {
     #[ExtraAssert\Sum(exactly: 100)]
